@@ -3,7 +3,7 @@ use ark_ff::PrimeField;
 use ark_mnt4_753::{Fr as MNT4BigFr, MNT4_753};
 use ark_mnt6_753::G1Affine;
 use ark_mnt6_753::{constraints::G1Var, Fr as MNT6BigFr};
-use ark_std::str::FromStr;
+use ark_ff::BigInteger;
 
 use ark_crypto_primitives::merkle_tree::{Config, MerkleTree, Path};
 use ark_crypto_primitives::{crh::TwoToOneCRHScheme, snark::SNARK};
@@ -189,11 +189,11 @@ fn main() {
 
     /* Enter your solution here */
 
-    // that's the result of base field q - leaked_secret:
-    // 0x01C4C62D92C41110229022EEE2CDADB7F997505B8FAFED5EB7E8F96C97D87307FDB925E8A0ED8D99D124D9A15AF79DB117E776F218059DB80F0DA5CB537E38685ACCE9767254A4638810719AC425F0E39D54522CDD119F5E9063DE245E8001 - 0x1AE9A6111E874FFDEBE11C7B25C929FAB87009F7D63A2CD2D16DAAE5FD597CCF51D9651CEECDE6B6A4EC50859E0CACFB94A8F576B7BFB30A24E13FD618C63C5BA31D73E408AB411CD98A31E9D6BE4AB30836741BA417EC56A1BAA4B1246C
-    let secret_hack = MNT4BigFr::from_str("2051652499764529898415644247353890890773010050586264624806163112346867261543339881636871816273939291719073984516544644676930418411289467245195740688456706426581796567579151128456253962325641729007702608627489987576484470733106").map_err(|_| ()).unwrap();
-    let nullifier_hack =
-        <LeafH as CRHScheme>::evaluate(&leaf_crh_params, vec![secret_hack]).unwrap();
+    let leaked_secret_bigint = leaked_secret.into_bigint();
+    let mut secret_hack_bigint = MNT6BigFr::MODULUS.clone();
+    secret_hack_bigint.sub_with_borrow(&leaked_secret_bigint);
+    let secret_hack = MNT4BigFr::from(secret_hack_bigint);
+    let nullifier_hack = <LeafH as CRHScheme>::evaluate(&leaf_crh_params, vec![secret_hack]).unwrap();
 
     /* End of solution */
 
