@@ -30,7 +30,22 @@
         /* Light grey border for subtle contrast */
         font-style: italic;
     }
+
+    .flex-container {
+        display: flex;
+        justify-content: center; /* Center horizontally */
+        align-items: center; /* Center vertically */
+        height: 60vh; /* Adjust the height as needed */
+}
+    .text-container {
+        display: flex;
+        justify-content: left; /* Center horizontally */
+        align-items: left; /* Center vertically */
+        height: 30vh; /* Adjust the height as needed */
+}
+
 </style>
+
 
 <body>
     <h2>Problem</h2>
@@ -76,21 +91,25 @@
     <li>Points in this curve are part of group such that if we take two points, and produce a
     third point in the cure according to the rules of a group.</li>
     
-    <li>Closed under a binary operation meaning when two points from this set are added (binary ops) will result in another point \((x,y)\)</li>
+    <li>Closed under a binary operation meaning when two points from this set are added (binary ops) will result in another point \((x,y)\).</li>
     
-    <li>Have an identity element</li>
+    <li>Have an identity element.</li>
     
-    <li>Every element have an inverse</li>
+    <li>Every element have an inverse.</li>
     
     </ul>
-    
-    
-    
+ 
+    <div class="flex-container">
+    <img src="ec.png" alt="Elliptic Curve with mod 23">
+    </div>
+    <div class="text-container">
+        This curve is generated based on <span class="latex">\(y^2 \equiv x^3 + 3 \pmod{23}\).
+        Its easily visible the nature of symmetric points for elliptic curve.</span>
+    </div>
+
+    A good place to review many cryptography concepts: <a href="https://nmohnblatt.github.io/zk-jargon-decoder/foreword.html">zkJargon</a>
     </p>
-
-
-
-        
+    
         
     <p>  
         MNT cycle of curves are pairing-friendly curves and have property as, base and scalar field of one curve is the scalar field and base field
@@ -100,6 +119,17 @@
 
     <h2>Arkworks primer</h2>
     <p>
+        <a href="https://www.youtube.com/watch?v=Bz2KN_h3VKM&t=90s">Arkworks</a> is one of the popular ecosystem of libraries based in rust for developing zkSNARKs. It has common set of traits and <a href="https://github.com/arkworks-rs/algebra/blob/master/ec/README.md"> apis</a> to work with different primitivs (ecs,ffs,hash) without writting from scratch. 
+        Since its written in rust, its important to understand how rust works in terms of designing libraries. Some of the unique design pattern of rust depends on it's traits and access to data. In the 
+        <a href="https://github.com/ZK-Hack/puzzle-gamma-ray">puzzle code</a> you can see code like,
+    <pre><code class="rust">
+    type LeafH = poseidon::CRH<ConstraintF>;
+    let nullifier_hack = <LeafH as CRHScheme>::evaluate(&leaf_crh_params, vec![secret_hack]).unwrap();
+    </code></pre>
+
+    <code>LeafH as CRHScheme</LeafH></code> read as type as trait, meaning <code>LeafH</code> type will use the <code>evaluate</code> function that is under <code></code>CRHScheme trait. You might ask why not just use <code></code>LeafH::evaluate(). The reason is to use fully qualified syntax to resolve to
+        the intended method. <code>LeafH</code> might have used other traits that have funtion or type name <code>evaluate</code>. A good analogy is when for site's access url if you use fully qualified domain name (FQDN) chances are you are hitting the correct url.  
+
 
     </p>
 
@@ -210,6 +240,8 @@
     dbg!(&new_pub.z);
     dbg!(&neg_pub.z);
     </code></pre>
+
+    <p>From the above code you verify that both \(y\) and \(- y\) resulting in same \(x\) but this will generate different nullifier since the \(-y\) value is different.</p>
 
 </body>
 
