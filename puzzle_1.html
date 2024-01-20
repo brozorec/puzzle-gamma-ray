@@ -65,17 +65,53 @@
     <h2>Elliptic Curve properties</h2>
 
     <p>
-        MNT cycle of curves have property as, base and scalar field of one curve is the scalar field and base field
-        respectively of the next curve.
+        Elliptic curves have the following formula,
+        \begin{equation}
+        y^2 \equiv x^3 + ax + b \pmod{p}
+        \end{equation}
+
+        where \(x\) and \(y\) to be elements of a finite field also known as the base field and \(p\) is a large prime number.
+    
+    <ul>
+    <li>Points in this curve are part of group such that if we take two points, and produce a
+    third point in the cure according to the rules of a group.</li>
+    
+    <li>Closed under a binary operation meaning when two points from this set are added (binary ops) will result in another point \((x,y)\)</li>
+    
+    <li>Have an identity element</li>
+    
+    <li>Every element have an inverse</li>
+    
+    </ul>
+    
+    
+    
     </p>
 
 
 
+        
+        
+    <p>  
+        MNT cycle of curves are pairing-friendly curves and have property as, base and scalar field of one curve is the scalar field and base field
+        respectively of the next curve. More on this <a href="https://arxiv.org/pdf/1803.02067.pdf">MNT Cycle of Curves</a>
+    </p>
+
+
+    <h2>Arkworks primer</h2>
+    <p>
+
+    </p>
 
 
 
     <h2>Solution</h2>
-    <p>By subtracting the original scalar from the curve order often works to find another scalar that, when multiplied
+    <p> Public key  generation process using elliptic curve is as follows,
+
+        \(pubk = kG\) where \(k\) is a scalar in the scalar field  and \(G\) is the generator point of the particular elliptic curve group.</p>
+        
+    <p>
+        By subtracting the original scalar (secret key) from the curve order often works to find another scalar that, when multiplied
         with the
         generator of an elliptic curve, produces a point with the same x-coordinate as the original scalar does. This is
         due to
