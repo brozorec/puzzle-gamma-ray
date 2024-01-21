@@ -136,6 +136,10 @@
 
 
     <h2>Solution</h2>
+    <p>This proof deals with the properties of points on an elliptic curve, specifically within the context of a subgroup \(J(r)\) of prime order. 
+        The statement it aims to prove is that for a given point \(P=(u,v)\) in the subgroup J(r), the point with coordinates \((u,−v)\) does not belong to \(J(r)\). 
+        The proof leverages the properties of elliptic curves and the behavior of points under the "doubling" operation
+    </p>
     <p> Public key  generation process using elliptic curve is as follows,
 
         \(pubk = kG\) where \(k\) is a scalar in the scalar field  and \(G\) is the generator point of the particular elliptic curve group.</p>
@@ -241,7 +245,7 @@
     dbg!(&neg_pub.z);
     </code></pre>
 
-    <p>From the above code you verify that both \(y\) and \(- y\) resulting in same \(x\) but this will generate different nullifier since the \(-y\) value is different.</p>
+    <p>From the above code you can verify that both \(y\) and \(- y\) resulting in same \(x\) but this will generate different nullifier since the \(-y\) value is different.</p>
 
 </body>
 
