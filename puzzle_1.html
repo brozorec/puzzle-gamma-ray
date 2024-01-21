@@ -103,7 +103,7 @@
     <img src="ec.png" alt="Elliptic Curve with mod 23">
     </div>
     <div class="text-container">
-        This curve is generated based on <span class="latex">\(y^2 \equiv x^3 + 3 \pmod{23}\).
+        <span class="latex">This curve is generated based on \(y^2 \equiv x^3 + 3 \pmod{23}\).
         Its easily visible the nature of symmetric points for elliptic curve.</span>
     </div>
 
@@ -136,10 +136,12 @@
 
 
     <h2>Solution</h2>
-    <p>The proof from the zcase lemma 5.4.7 deals with the properties of points on an elliptic curve, specifically within the context of a subgroup \(J(r)\) of prime order. 
-        The statement it aims to prove is that for a given point \(P=(u,v)\) in the subgroup J(r), the point with coordinates \((u,−v)\) does not belong to \(J(r)\). 
+    <p> The lemma 5.4.7 of zcash paper proofs the properties of points on an elliptic curve, specifically within the context of a subgroup \(J(r)\) of prime order such
+         that for a given point \(P=(u,v)\) in the subgroup \(J(r)\), the point with coordinates \((u,−v)\) does not belong to \(J(r)\). 
         The proof leverages the properties of elliptic curves and the behavior of points under the "doubling" operation. While in MNT curve it uses <code>Weierstrass</code> form meaning both \((x,y)\) and \((x,-y)\) are valid points 
         in the curve group.
+        Since Bob uses <code>MNT6753</code> cycle of curves for key generation, both both \((x,y)\) and \((x,-y)\) are valid points in the group. Additonally MNT6753 are cycle of curves which have the property of base field of one curve being the 
+        scalar field of the next. So we used base field of MNT6 curve which is the scalar field of MNT4 curve. 
     </p>
     <p> Public key  generation process using elliptic curve is as follows,
 
@@ -192,31 +194,28 @@
 
 
 
-    <p> .......... TBD ...........</p>
-
     <h2>Rust Code</h2>
     <pre><code class="rust">
 // Rust code example
-    // Getting the the modulus of the MNT curve which is the curve order.
+    // Getting the the modulus MNT6BigFr of MNT6BigFr curve which is the curve order.
     let modulus = MNT6BigFr::MODULUS.clone();
     let leaked_secret: MNT4BigFr = from_file("./puzzle-gamma-ray/leaked_secret.bin");
     let big_int_leaked = leaked_secret.into_bigint();
     
+    // Type casting to BigInteger768 form which will read in 12 elements as rust's capacity is 128bits
     let int_value = BigInteger768::from(modulus);
-    // let int_value2 = BigInteger768::from(modulus1);
     let leaked_sec_big_rep = BigInteger768::from(leaked_secret);
     
+    // making sure its in the MNT4BigFr format since the leaked_bigint is. 
     let curve_order = MNT4BigFr::from(int_value);
-    // let int_value2 = MNT4BigFr::from(int_value2);
     let leaked_bigint = MNT4BigFr::from(leaked_sec_big_rep);
     
-    // We obtain the same secret by subtracting from curve_order
+    // We obtain the same secret by subtracting from curve_order reasoning expalind above
     let secret_hack = curve_order - leaked_bigint;
     
     let nullifier_hack =
     <LeafH as CRHScheme>::evaluate(&leaf_crh_params, vec![secret_hack]).unwrap();
 
-    // Testing the points (x,y) and (x,-y) to confirm
     let g = affine::generator();
     let a = <MNT4BigFr as PrimeField>::MODULUS;
     let leaked_bigint = MNT4BigFr::from(leaked_sec_big_rep);
@@ -227,8 +226,10 @@
     dbg!(&pubk);
     dbg!(&pubk.y);
     
-    let e = projective::rand(&mut rng);
-    
+
+        // Testing further with randomly generated point (x,y) and then negating (x,-y) to confirm 
+
+    let e = affine::rand(&mut rng);
     let e_affine = e;
     let e_x = e_affine.x;
     let e_y = e_affine.y;
@@ -242,8 +243,8 @@
     
     let neg_pub = neg_new_e.mul_bigint(&leaked_secret_bigint);
     
-    dbg!(&new_pub.z);
-    dbg!(&neg_pub.z);
+    dbg!(&new_pub.y);
+    dbg!(&neg_pub.y);
     </code></pre>
 
     <p>From the above code you can verify that both \(y\) and \(- y\) resulting in same \(x\) but this will generate different nullifier since the \(-y\) value is different.</p>
